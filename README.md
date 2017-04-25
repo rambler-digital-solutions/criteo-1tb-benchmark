@@ -72,7 +72,7 @@ From Spark.ML we chose the following models:
 
 Our preliminary research shows that other four classification models from Spark.ML are not well-suited for our task of CTR prediction:
 
-![ROC AUC](images/ROC AUC.cluster_selection.png) ![Log loss](images/Log loss.cluster_selection.png) ![Training time](images/Train time.cluster_selection.png)
+![ROC AUC](images/roc_auc.cluster_selection.png) ![Log loss](images/log_loss.cluster_selection.png) ![Training time](images/train_time.cluster_selection.png)
 
 - [NaiveBayes](http://spark.apache.org/docs/latest/ml-classification-regression.html#naive-bayes) provides significantly worse logistic loss (which is an essential metric of CTR models' quality) than all other models;
 - [DecisionTreeClassifier](http://spark.apache.org/docs/latest/ml-classification-regression.html#decision-tree-classifier) suffers in quality in comparison to the RandomForestClassifier but still requires roughly the same amount of time to train;
@@ -96,7 +96,7 @@ For the experiment we used Vowpal Wabbit 8.3.0, XGBoost 0.4 and Spark 2.1.0 runn
 
 Our first idea was to skip models' parameters optimization completely, but unfortunately XGBoost's default parameters are not good enough for training even on million lines of data - the default number of trees is only 10, and it hits the ceiling quite soon:
 
-![](images/ROC AUC.why_optimize.png) ![](images/Log loss.why_optimize.png)
+![ROC AUC](images/roc_auc.why_optimize.png) ![Log loss](images/log_loss.why_optimize.png)
 
 These pictures reminded us that production usage of any machine learning model is tied with optimization of its parameters, and in our experiment we should do the same. For optimization of parameters of models (including Spark.ML ones) we used million-line sample of train data and 5-fold cross validation for averaging the metric (log loss).
 
@@ -107,7 +107,7 @@ These pictures reminded us that production usage of any machine learning model i
 
 We tried to do one-hot-encoding of categorical features, but due to very large numbers of unique values it turned out to be very time and memory consuming, so for Spark.ML we decided to try the hashing trick. Spark.ML LogisticRegression was trained using this approach. We sticked to hashing space of $10^5$ hashes as it turned out to give about the same quality as VW on large samples. Taking less hashes usually leads to better quality on smaller data (because of less overfitting) and worse quality on bigger data (because some patterns in data are consumed by collisions in hashing space):
 
-![](images/ROC AUC.lr_hash_size.png) ![](images/Log loss.lr_hash_size.png)
+![ROC AUC](images/roc_auc.lr_hash_size.png) ![Log loss](images/log_loss.lr_hash_size.png)
 
 RandomForestClassifier was very slow to train even with a thousand hashes, so we used "as-is" format for it:
 
@@ -131,7 +131,7 @@ All work was performed in Jupyter notebooks in Python. Notebooks:
 ### Local training - Vowpal Wabbit & XGBoost
 [_(back to toc)_](#table-of-contents)
 
-![](images/ROC AUC.local.png) ![](images/Log loss.local.png) ![](images/Train time.local.png) ![](images/Maximum memory.local.png) ![](images/CPU load.local.png)
+![ROC AUC](images/roc_auc.local.png) ![Log loss](images/log_loss.local.png) ![Train time](images/train_time.local.png) ![Maximum memory](images/maximum_memory.local.png) ![CPU load](images/cpu_load.local.png)
 
 Some observations:
 
@@ -144,7 +144,7 @@ Some observations:
 ### Distributed training - Spark.ML
 [_(back to toc)_](#table-of-contents)
 
-![](images/ROC AUC.cluster.png) ![](images/Log loss.cluster.png) ![](images/Train time.cluster.png)
+![ROC AUC](images/roc_auc.cluster.png) ![Log loss](images/log_loss.cluster.png) ![Train time](images/train_time.cluster.png)
 
 We made the following conclusions:
 
@@ -158,7 +158,7 @@ We made the following conclusions:
 
 To check how model training scales to multi-core setup we made a quick test where we increased a number of cores and measured training time for every step. To make it fast we used a $10^7$ sample of train data and checked training time for a number of cores from 5 to 50 in steps of 5. In order to eliminate the uncertainty brought forth by running the test in parallel with production tasks, for this test we created a standalone Spark cluster running on three machines with a total of ≈50 cores and ≈200 GiB of memory.
 
-![](images/time_vs_cores.png)
+![Time vs. cores](images/time_vs_cores.png)
 
 Training time dropped quite fast when we went from 5 to 15 cores but slowed down afterwards and completely ceased to improve by the mark of 40 cores (even growing a little for transition from 40 to 45 cores). The main idea that we extracted from this picture is that one should not increase amount of resources beyond minimum required, so that work distribution and aggregation overhead would be cheaper than potential improvement of speed by parallelization.
 
@@ -167,7 +167,7 @@ Training time dropped quite fast when we went from 5 to 15 cores but slowed down
 ### Comparison of local and remote
 [_(back to toc)_](#table-of-contents)
 
-![](images/ROC AUC.local_and_cluster.png) ![](images/Log loss.local_and_cluster.png) ![](images/Train time.local_and_cluster.png)
+![ROC AUC](images/roc_auc.local_and_cluster.png) ![Log loss](images/log_loss.local_and_cluster.png) ![Train time](images/train_time.local_and_cluster.png)
 
 We can see that:
 

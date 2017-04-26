@@ -42,14 +42,14 @@ This is how it looks like:
 
 ![Dataset schema](images/dataset.png)
 
-All the data except the last day was concatenated and sampled into training sets of ![10^n](http://www.sciweavers.org/tex2img.php?eq=10%5En&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) and ![3*10^n](http://www.sciweavers.org/tex2img.php?eq=3%20%5Ccdot%2010%5En&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) lines with ![n in {4, 5, ..., 9}](http://www.sciweavers.org/tex2img.php?eq=n%20%5Cin%20%5C%7B4%2C%205%2C%20...%2C%209%5C%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) (i.e. train samples' sizes are 10k, 30k, 100k, ..., 1kkk, 3kkk lines). The last day was used for testing - a sample of one million lines was taken from it. All samples were converted to
+All the data except the last day was concatenated and sampled into training sets of 10ⁿ and 3×10ⁿ lines with `n ∈ {4, 5, ..., 9}` (i.e. train samples' sizes are 10k, 30k, 100k, ..., 1kkk, 3kkk lines). The last day was used for testing - a sample of one million lines was taken from it. All samples were converted to
 
 - LibSVM format for training XGBoost models and as a source for the transformation to Spark.ML DataFrame;
 - Vowpal Wabbit own data format.
 
 Data for Spark.ML models was processed on-the-fly from LibSVM format:
 
-- into a dataset of tuples of "label" (integer) and "features" (SparseVector of size ![10^5](http://www.sciweavers.org/tex2img.php?eq=10%5E5&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) using hashing trick for all features) for Spark.ML LogisticRegression;
+- into a dataset of tuples of "label" (integer) and "features" (SparseVector of size 10⁵ using hashing trick for all features) for Spark.ML LogisticRegression;
 - into a dataset of tuples of "label" (integer) and "features" (SparseVector of 39 taken as-is from corresponding columns, see below) for Spark.ML RandomForestClassifier.
 
 
@@ -105,7 +105,7 @@ These pictures reminded us that production usage of any machine learning model i
 ### Data format for Spark.ML
 [_(back to toc)_](#table-of-contents)
 
-We tried to do one-hot-encoding of categorical features, but due to very large numbers of unique values it turned out to be very time and memory consuming, so for Spark.ML we decided to try the hashing trick. Spark.ML LogisticRegression was trained using this approach. We sticked to hashing space of ![10^5](http://www.sciweavers.org/tex2img.php?eq=10%5E5&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) hashes as it turned out to give about the same quality as VW on large samples. Taking less hashes usually leads to better quality on smaller data (because of less overfitting) and worse quality on bigger data (because some patterns in data are consumed by collisions in hashing space):
+We tried to do one-hot-encoding of categorical features, but due to very large numbers of unique values it turned out to be very time and memory consuming, so for Spark.ML we decided to try the hashing trick. Spark.ML LogisticRegression was trained using this approach. We sticked to hashing space of 10⁵ hashes as it turned out to give about the same quality as VW on large samples. Taking less hashes usually leads to better quality on smaller data (because of less overfitting) and worse quality on bigger data (because some patterns in data are consumed by collisions in hashing space):
 
 ![ROC AUC](images/roc_auc.lr_hash_size.png) ![Log loss](images/log_loss.lr_hash_size.png)
 
@@ -156,7 +156,7 @@ We made the following conclusions:
 ### Distributed training - Time vs. Cores
 [_(back to toc)_](#table-of-contents)
 
-To check how model training scales to multi-core setup we made a quick test where we increased a number of cores and measured training time for every step. To make it fast we used a ![10^7](http://www.sciweavers.org/tex2img.php?eq=10%5E7&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0) sample of train data and checked training time for a number of cores from 5 to 50 in steps of 5. In order to eliminate the uncertainty brought forth by running the test in parallel with production tasks, for this test we created a standalone Spark cluster running on three machines with a total of ≈50 cores and ≈200 GiB of memory.
+To check how model training scales to multi-core setup we made a quick test where we increased a number of cores and measured training time for every step. To make it fast we used a 10⁷ sample of train data and checked training time for a number of cores from 5 to 50 in steps of 5. In order to eliminate the uncertainty brought forth by running the test in parallel with production tasks, for this test we created a standalone Spark cluster running on three machines with a total of ≈50 cores and ≈200 GiB of memory.
 
 ![Time vs. cores](images/time_vs_cores.png)
 

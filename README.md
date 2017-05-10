@@ -18,6 +18,7 @@
   * [Distributed training - Time vs. Cores](#distributed-training---time-vs-cores)
   * [Comparison of local vs. remote](#comparison-of-local-vs-remote)
 * [Conclusion](#conclusion)
+* [Resources](#resources)
 
 
 ## Introduction
@@ -193,3 +194,9 @@ Spark.ML LogisticRegression is quite close in quality to Vowpal Wabbit, and mayb
 Spark.ML LogisticRegression appeared to be considerably faster than VW on billion-line samples and maybe it can be made even faster by optimizing the allocated resources.
 Spark.ML RandomForestClassifier stopped increasing in quality quite early and it is also quite slow.
 
+
+
+## Resources
+[_(back to toc)_](#table-of-contents)
+
+Results in table format can be found ![here](results). Scala scripts used for faster conversion and sampling can be found ![here](scripts/conversion) - these scripts can be used from ![spark-shell](http://spark.apache.org/docs/latest/quick-start.html#basics) using `:load` command. Scripts for running VW & XGBoost and plotting outside of the Jupyter notebooks can be found ![here](scripts/running).

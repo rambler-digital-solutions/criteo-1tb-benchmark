@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import argparse
+import re
 
 import cycler
 import pandas
@@ -42,10 +43,12 @@ def plot_stuff(df, what, ylabel=None, **kwargs):
     ax.grid(which='major', linestyle='-')
     ax.grid(which='minor', linestyle=':')
 
+    what_normalized = re.sub(r'\s', '_', what).lower()
+
     if experiment_name is not None:
-        ax.get_figure().savefig(what + '.' + experiment_name + '.png')
+        ax.get_figure().savefig(what_normalized + '.' + experiment_name + '.png')
     else:
-        ax.get_figure().savefig(what + '.png')
+        ax.get_figure().savefig(what_normalized + '.png')
 
 
 parser = argparse.ArgumentParser()

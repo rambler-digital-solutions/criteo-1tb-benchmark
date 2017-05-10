@@ -199,4 +199,4 @@ Spark.ML RandomForestClassifier stopped increasing in quality quite early and it
 ## Resources
 [_(back to toc)_](#table-of-contents)
 
-Results in table format can be found ![here](results). Scala scripts used for faster conversion and sampling can be found ![here](scripts/conversion) - these scripts can be used from ![spark-shell](http://spark.apache.org/docs/latest/quick-start.html#basics) using `:load` command. Scripts for running VW & XGBoost and plotting outside of the Jupyter notebooks can be found ![here](scripts/running).
+Results in table format can be found [here](results). Scala scripts used for faster conversion and sampling can be found [here](scripts/conversion) - these scripts can be used from [spark-shell](http://spark.apache.org/docs/latest/quick-start.html#basics) using `:load` command. Scripts for running VW & XGBoost and plotting outside of the Jupyter notebooks can be found [here](scripts/running).

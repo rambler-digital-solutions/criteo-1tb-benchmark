@@ -186,5 +186,10 @@ We can see that:
 ## Conclusion
 [_(back to toc)_](#table-of-contents)
 
-One should pick a correct tool for the task, and Spark.ML can be that kind of tool for training machine learning models on big data.
+The best quality measured by logarithmic loss (which is a metric of choice for CTR prediction) was achived using XGBoost - no matter in-memory or out-of-core, as they both seem to be equal in quality - on a sample smaller in size than other models required for the same level of quality.
+However XGBoost is very slow on big samples in out-of-core setup thus it was not rational to test it on a 300kk sample and above (training the in-memory setup on large samples was also not possible due to memory restrictions).
+The highest ROC AUC was reached by Vowpal Wabbit on one-billion-line train sample, strangely decreasing in quality by three-billion-line sample.
+Spark.ML LogisticRegression is quite close in quality to Vowpal Wabbit, and maybe it can be made even better by increasing the feature space size (which is 100k hashes in current setup).
+Spark.ML LogisticRegression appeared to be considerably faster than VW on billion-line samples and maybe it can be made even faster by optimizing the allocated resources.
+Spark.ML RandomForestClassifier stopped increasing in quality quite early and it is also quite slow.
 
